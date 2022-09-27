@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1 id="color">Player</h1>
+    <form id="form">
+      <select name="player" id="player">
+        <option value="white">White</option>
+        <option value="black">Black</option>
+      </select>
+      <input type="text" id="from" placeholder="from" />
+      <input type="text" id="to" placeholder="to" />
+      <input type="submit" />
+    </form>
+
+    <script>
+      let from, to, player;
+      const color = document.getElementById('color');
+      const playerInp = document.getElementById('player');
+      const fromInp = document.getElementById('from');
+      const toInp = document.getElementById('to');
+      const formInp = document.getElementById('form');
+      formInp.addEventListener('submit', (e) => {
+        e.preventDefault();
+        from = e.target.from.value;
+        to = e.target.to.value;
+        player = e.target.player.value;
+
+        socket.send(
+          JSON.stringify({
+            player,
+            from,
+            to,
+          })
+        );
+      });
+      let socket = new WebSocket('ws://localhost:8080/ws');
+      console.log('Await websocket connection...');
+
+      socket.onopen = () => {
+        console.log('successfully connected');
+      };
+
+      socket.onclose = (e) => {
+        console.log('closed connection', e);
+      };
+
+      socket.onmessage = (msg) => {
+        // console.log(msg);
+        const m = JSON.parse(msg.data);
+        console.log(m);
+      };
+
+      socket.onerror = (err) => {
+        console.log('socket error', err);
+      };
+    </script>
+  </body>
+</html>
